@@ -18,6 +18,9 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "@prisma/client": "^5.18.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "prisma": "^5.18.0"
   }
 }
