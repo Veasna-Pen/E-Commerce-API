@@ -24,6 +24,8 @@ model User {
   email     String    @unique
   password  String
   role      Role      @default(USER)
+  defaulShippingAddress String?
+  defaultBillingAddress  String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   addresses Address[]

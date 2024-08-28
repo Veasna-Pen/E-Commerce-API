@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import { z } from 'zod'
 
 export const SignUpSchema = z.object({
@@ -8,7 +9,17 @@ export const SignUpSchema = z.object({
 
 export const AddressSchema = z.object({
     description: z.string().nullable(),
-    city: z.string(), 
+    city: z.string(),
     country: z.string(),
-    pincode: z.string().length(6) 
+    pincode: z.string().length(6)
 });
+
+export const UpdateUserSchema = z.object({
+    name: z.string(),
+    defaulShippingAddress: z.string().optional(),
+    defaultBillingAddress: z.string().optional(),
+})
+
+export const ChangeUserRoleSchema = z.object({
+    role: z.nativeEnum(Role)
+})
