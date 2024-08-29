@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { ChangeQuantitySchema, CreateCartItemSchema } from "../schema/cart";
 import { Product } from "@prisma/client";
 import { NotFoundException } from "../exceptions/not-found";
-import { ErrorCode } from "../exceptions/root";
+import { ErrorCode, HttpException } from "../exceptions/root";
 import { prismaClient } from "..";
 import { UnauthorizedException } from "../exceptions/unauthorized";
+import { BadRequestsException } from "../exceptions/bad-requests";
 
 export const addItemToCart = async (req: Request, res: Response) => {
     const validatedData = CreateCartItemSchema.parse(req.body)
@@ -59,13 +60,27 @@ export const addItemToCart = async (req: Request, res: Response) => {
 }
 
 export const deleteItemFromCart = async (req: Request, res: Response) => {
-    const cartItem = await prismaClient.cartItem.delete({
+
+    const cartItemId = req.params.id;
+    const cartItem = await prismaClient.cartItem.findUnique({
+        where: { id: cartItemId }
+    });
+
+    if (!cartItem) {
+        throw new BadRequestsException("Cart item not found", ErrorCode.PRODUCT_NOT_FOUND);
+    }
+
+    if (cartItem.userId !== req.user?.id) {
+        throw new UnauthorizedException("Unauthorized", ErrorCode.UNAUTHORIZED)
+    } 
+    
+    await prismaClient.cartItem.delete({
         where: {
             id: req.params.id
         }
     })
-
     res.json(cartItem)
+
 }
 
 export const changeQuantity = async (req: Request, res: Response) => {
